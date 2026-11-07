@@ -16,6 +16,9 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    # 作业级变量：步骤的 if 条件只能读取作业级/工作流级 env，用于判断是否配置了 Marketplace 发布令牌。
+    env:
+      PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
     steps:
 
       # Free GitHub Actions Environment Disk Space
@@ -57,13 +60,20 @@ jobs:
           ./gradlew patchChangelog --release-note-file=$RELEASE_NOTE
 
       # Publish the plugin to JetBrains Marketplace
+      # 未配置 JetBrains Marketplace 发布令牌时跳过 Marketplace 发布，但仍构建插件并上传到 GitHub Release。
       - name: Publish Plugin
+        if: ${{ env.PUBLISH_TOKEN != '' }}
         env:
           PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
           CERTIFICATE_CHAIN: ${{ secrets.CERTIFICATE_CHAIN }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           PRIVATE_KEY_PASSWORD: ${{ secrets.PRIVATE_KEY_PASSWORD }}
         run: ./gradlew publishPlugin
+
+      # 未发布到 Marketplace 时单独构建插件包，供下一步上传
+      - name: Build Plugin
+        if: ${{ env.PUBLISH_TOKEN == '' }}
+        run: ./gradlew buildPlugin
 
       # Upload an artifact as a release asset
       - name: Upload Release Asset

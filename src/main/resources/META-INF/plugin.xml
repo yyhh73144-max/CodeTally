@@ -5,14 +5,16 @@
     <vendor>yyhh73144-max</vendor>
     <description><![CDATA[
         <p><b>CodeTally</b> counts files, total/code/comment/blank lines and functions per file type
-        (Kotlin, Java, C/C++, XML) for the whole project or a selected directory in Android Studio.</p>
-        <p><b>CodeTally</b> 是面向 Android Studio 的代码统计插件。</p>
+        (Kotlin, Java, C/C++, XML) for the whole project or any selected directory in Android Studio.</p>
+        <p>CodeTally 是一款 Android Studio 代码统计插件：</p>
         <ul>
-            <li>按文件类型（Kotlin、Java、C/C++、XML）统计文件数、总行数、代码行、注释行、空行与函数数，并给出全部类型合计；</li>
-            <li>可统计整个项目，或在项目视图中右键统计选中的目录/文件；</li>
-            <li>自动排除构建输出、生成源码与 IDE 配置目录；未保存的编辑内容也会计入。</li>
+            <li>按文件类型（Kotlin、Java、C/C++、XML）统计文件数、总行数、代码行、注释行、空行与函数数，并给出全部合计；</li>
+            <li>统计整个项目，或在项目视图中右键统计任意目录/文件；</li>
+            <li>自动排除库、生成源码、Gradle build 输出与隐藏缓存目录（.gradle、.gradle-user、.idea、.cxx 等）；</li>
+            <li>项目级自定义排除文件夹（Settings › Tools › CodeTally 代码统计，或右键“在代码统计中排除”），可随项目共享；</li>
+            <li>工具窗口支持排序、按语言筛选、双击打开文件，数字可切换为中文万/亿格式；</li>
+            <li>函数数基于轻量词法分析估算，不依赖语言插件，未安装 C/C++ 支持时同样可用。</li>
         </ul>
-        <p>函数数基于轻量词法分析估算，不依赖语言插件，未安装 C/C++ 支持时同样可用。</p>
     ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
@@ -22,6 +24,8 @@
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="CodeTally" anchor="bottom" icon="AllIcons.Actions.ListFiles"
                     factoryClass="com.github.yyhh73144max.codetally.toolWindow.CodeTallyToolWindowFactory"/>
+        <projectConfigurable parentId="tools" id="codetally.settings" key="settings.displayName"
+                             instance="com.github.yyhh73144max.codetally.settings.CodeTallyConfigurable"/>
     </extensions>
 
     <actions>
@@ -33,5 +37,11 @@
                 class="com.github.yyhh73144max.codetally.actions.TallySelectionAction">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </action>
+        <action id="CodeTally.ToggleExclude"
+                class="com.github.yyhh73144max.codetally.actions.ToggleExcludeFolderAction">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="CodeTally.TallySelection"/>
+        </action>
+        <action id="CodeTally.OpenSettings" icon="AllIcons.General.Settings"
+                class="com.github.yyhh73144max.codetally.actions.OpenTallySettingsAction"/>
     </actions>
 </idea-plugin>
