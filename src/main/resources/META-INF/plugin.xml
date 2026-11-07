@@ -4,16 +4,34 @@
     <name>CodeTally</name>
     <vendor>yyhh73144-max</vendor>
     <description><![CDATA[
-        <p><b>CodeTally</b> is a repository that provides a pure template to make it easier to create a new plugin project.</p>
-        <p>The main goal of this template is to speed up the setup phase of plugin development for both new and experienced developers by preconfiguring the project scaffold and CI, linking to the proper documentation pages, and keeping everything organized.</p>
+        <p><b>CodeTally</b> counts files, total/code/comment/blank lines and functions per file type
+        (Kotlin, Java, C/C++, XML) for the whole project or a selected directory in Android Studio.</p>
+        <p><b>CodeTally</b> 是面向 Android Studio 的代码统计插件。</p>
+        <ul>
+            <li>按文件类型（Kotlin、Java、C/C++、XML）统计文件数、总行数、代码行、注释行、空行与函数数，并给出全部类型合计；</li>
+            <li>可统计整个项目，或在项目视图中右键统计选中的目录/文件；</li>
+            <li>自动排除构建输出、生成源码与 IDE 配置目录；未保存的编辑内容也会计入。</li>
+        </ul>
+        <p>函数数基于轻量词法分析估算，不依赖语言插件，未安装 C/C++ 支持时同样可用。</p>
     ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
 
-    <resource-bundle>messages.MyBundle</resource-bundle>
+    <resource-bundle>messages.CodeTallyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.yyhh73144max.codetally.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-        <postStartupActivity implementation="com.github.yyhh73144max.codetally.startup.MyProjectActivity" />
+        <toolWindow id="CodeTally" anchor="bottom" icon="AllIcons.Actions.ListFiles"
+                    factoryClass="com.github.yyhh73144max.codetally.toolWindow.CodeTallyToolWindowFactory"/>
     </extensions>
+
+    <actions>
+        <action id="CodeTally.TallyProject" icon="AllIcons.Actions.Execute"
+                class="com.github.yyhh73144max.codetally.actions.TallyProjectAction">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+        <action id="CodeTally.TallySelection"
+                class="com.github.yyhh73144max.codetally.actions.TallySelectionAction">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+        </action>
+    </actions>
 </idea-plugin>
